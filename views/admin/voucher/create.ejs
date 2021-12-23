@@ -1,0 +1,133 @@
+<% include ../../partials/header.ejs %>
+
+<!-- Navbar -->
+<% include ../../partials/navbar.ejs %>
+<!-- /.navbar -->
+
+<!-- Main Sidebar Container -->
+<% include ../../partials/sidebar.ejs %>
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Voucher</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="/">Home</a></li>
+            <li class="breadcrumb-item"><a href="/voucher">Voucher</a></li>
+            <li class="breadcrumb-item active">Tambah</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <!-- /.container-fluid -->
+  </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title">Form Tambah Voucher</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+            <form action="/voucher" enctype="multipart/form-data" method="post">
+              <div class="card-body">
+                <div class="form-group">
+                  <label for="name">Nama Game</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="name"
+                    name="name"
+                    placeholder="Masukan nama game"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label>Kategori</label>
+                  <select
+                    class="form-control select2"
+                    style="width: 100%"
+                    name="category"
+                    required
+                  >
+                    <option selected="selected" disabled>Pilih Kategori</option>
+                    <% category.forEach(c => { %>
+                    <option value="<%= c._id  %>"><%= c.name %></option>
+                    <% }) %>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Nominal</label>
+                  <div class="select2-purple">
+                    <select
+                      class="form-control select2"
+                      style="width: 100%"
+                      name="nominals"
+                      multiple="multiple"
+                      required
+                      data-placeholder="Pilih nominal"
+                    >
+                      <% nominal.forEach(n => { %>
+                      <option value="<%= n._id  %>">
+                        <%= n.coinQuantity %> <%= n.coinName %>
+                      </option>
+                      <% }) %>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="image">Gambar</label>
+                  <input
+                    type="file"
+                    class="form-control"
+                    id="image"
+                    name="image"
+                    placeholder="Masukan Gambar"
+                  />
+                  <br />
+                  <img src="" class="img-thumbnail" id="preview" />
+                </div>
+              </div>
+              <!-- /.card-body -->
+              <div class="card-footer">
+                <button type="submit" class="btn btn-primary">Simpan</button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+  </section>
+  <!-- /.content -->
+</div>
+<% include ../../partials/footer.ejs %>
+
+<script>
+  const previewThumbnail = function (input) {
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        $("#preview").attr("src", e.target.result);
+        $("#preview").attr("width", "20%");
+        $("#preview").attr("height", "20%");
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  };
+  $("#image").change(function () {
+    previewThumbnail(this);
+  });
+</script>
