@@ -6,6 +6,7 @@ const logger = require("morgan");
 const methodOverride = require("method-override");
 const session = require("express-session");
 const flash = require("connect-flash");
+const cors = require("cors");
 
 const dashboardRouter = require("./routes/dashboard");
 const categoryRouter = require("./routes/category");
@@ -15,8 +16,12 @@ const bankRouter = require("./routes/bank");
 const paymentRouter = require("./routes/payment");
 const userRouter = require("./routes/user");
 const transactionRouter = require("./routes/transaction");
+const playerRouter = require("./routes/player");
+const authRouter = require("./routes/auth");
 
 const app = express();
+const URL = "/api/v1";
+app.use(cors());
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -51,13 +56,13 @@ app.use("/bank", bankRouter);
 app.use("/payment", paymentRouter);
 app.use("/transaction", transactionRouter);
 
+// API Router
+app.use(`${URL}/players`, playerRouter);
+app.use(`${URL}/auth`, authRouter);
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-  // next(createError(404));
-  res.render("404", {
-    title: "Page Not Found",
-    user: req.session.user,
-  });
+  next(createError(404));
 });
 
 // error handler

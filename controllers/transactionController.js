@@ -24,12 +24,13 @@ const transaction_status_update = async (req, res) => {
   try {
     const { id } = req.params;
     const { status } = req.query;
-    await Transaction.findOneAndUpdate(
-      { _id: id },
-      {
-        status,
-      }
-    );
+    const transaction = await Transaction.findOne({ _id: id });
+    if (transaction.status !== "pending") {
+      throw new Error("Gagal update status");
+      return;
+    }
+    transaction.status = status;
+    await transaction.save();
     req.flash("alertMessage", "Status transaksi berhasil diupdate");
     req.flash("alertStatus", "success");
     res.redirect("/transaction");

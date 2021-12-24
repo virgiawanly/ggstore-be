@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
+const HASH_ROUND = 10;
 const Schema = mongoose.Schema;
 
 const playerSchema = new Schema(
@@ -41,17 +43,35 @@ const playerSchema = new Schema(
     avatar: {
       type: String,
     },
-    banks: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Bank",
-      },
-    ],
+    fileName: {
+      type: String,
+    },
+    favorite: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+    },
   },
   {
     timestamps: true,
   }
 );
+
+playerSchema.path("email").validate(
+  async function (value) {
+    try {
+      const count = await this.model("Player").countDocuments({ email: value });
+      return !count;
+    } catch (err) {
+      throw err;
+    }
+  },
+  (attr) => `${attr.value} sudah terdaftar`
+);
+
+playerSchema.pre("save", function (next) {
+  this.password = bcrypt.hashSync(this.password, HASH_ROUND);
+  next();
+});
 
 const Player = mongoose.model("Player", playerSchema);
 module.exports = Player;
