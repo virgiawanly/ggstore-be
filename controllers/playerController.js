@@ -28,7 +28,7 @@ const detail_page = async (req, res) => {
       .populate("category")
       .populate("user", "_id name phoneNumber")
       .populate("nominals");
-    const payment = await Payment.find();
+    const payment = await Payment.find().populate("banks");
 
     if (!voucher) {
       return res.status(404).json({ message: "Voucher not found" });
