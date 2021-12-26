@@ -9,7 +9,6 @@ const sign_up = async (req, res, next) => {
   try {
     const payload = req.body;
     if (req.file) {
-      // Get file info
       const tmp_path = req.file.path;
       const oriname = req.file.originalname;
       const file_ext = oriname.split(".")[oriname.split(".").length - 1];
@@ -18,29 +17,33 @@ const sign_up = async (req, res, next) => {
         config.rootPath,
         `public/uploads/${filename}`
       );
-      // Move file
-      const src = fs.createReadStream(tmp_path);
-      const dest = fs.createWriteStream(target_path);
-      src.pipe(dest);
-      src.on("end", async () => {
-        // Store data
-        try {
-          const player = new Player({
-            ...payload,
-            avatar: filename,
-          });
-          await player.save();
-          delete player._doc.password;
+
+      try {
+        const player = new Player({
+          ...payload,
+          avatar: filename,
+        });
+        await player.save();
+        delete player._doc.password;
+
+        const src = fs.createReadStream(tmp_path);
+        const dest = fs.createWriteStream(target_path);
+
+        src.pipe(dest);
+        src.on("end", () => {
           res.status(201).json({ data: player });
-        } catch (err) {
-          if (err.name === "ValidationError") {
-            return res
-              .status(422)
-              .json({ error: true, message: err.message, fields: err.errors });
-          }
-          next(err);
+        });
+        src.on("err", () => {
+          throw new Error("Tidak dapat mengupload file");
+        });
+      } catch (err) {
+        if (err.name === "ValidationError") {
+          return res
+            .status(422)
+            .json({ error: true, message: err.message, fields: err.errors });
         }
-      });
+        next(err);
+      }
     } else {
       const player = new Player(payload);
       await player.save();
