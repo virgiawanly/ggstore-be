@@ -19,7 +19,7 @@ const { isLoginPlayer } = require("../middleware/auth");
 router.get("/landing-page", landing_page);
 router.get("/:id/detail", detail_page);
 router.get("/category", category);
-router.get("/checkout", isLoginPlayer, checkout);
+router.post("/checkout", isLoginPlayer, checkout);
 router.get("/history", isLoginPlayer, transaction_history);
 router.get("/history/:id", isLoginPlayer, transaction_detail);
 router.get("/dashboard", isLoginPlayer, dashboard);

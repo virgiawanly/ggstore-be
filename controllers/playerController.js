@@ -226,7 +226,7 @@ const profile = async (req, res) => {
   }
 };
 
-const edit_profile = async (req, res, netx) => {
+const edit_profile = async (req, res, next) => {
   try {
     const { name = "", phoneNumber = "" } = req.body;
     const payload = {};
